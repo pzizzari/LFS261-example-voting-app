@@ -4,29 +4,30 @@ pipeline {
     nodejs 'NodeJS 19.0.1'
     }
   stages{
-    stage(build){
-      when{
-          changeset "**/result/**"
-        }
-      steps{
-        echo 'Compiling result app..'
-        dir('result'){
-          sh 'npm install'
-        }
-      }
-    }
-    stage("test"){
-      when{
-          changeset "**/result/**"
-        }
-      steps{
-        echo 'Running Unit Tests on result app..'
-        dir('result'){
-          sh 'npm install'
-          sh 'npm test'
+      stage(build){
+        when{
+            changeset "**/result/**"
+          }
+        steps{
+          echo 'Compiling result app..'
+          dir('result'){
+            sh 'npm install'
+          }
         }
       }
-    }
+      stage("test"){
+        when{
+            changeset "**/result/**"
+          }
+        steps{
+          echo 'Running Unit Tests on result app..'
+          dir('result'){
+            sh 'npm install'
+            sh 'npm test'
+          }
+        }
+      }
+  }
     post{
       always{
           echo 'Building multibranch pipeline for worker is completed..'
@@ -36,5 +37,4 @@ pipeline {
       success{
         slackSend (channel: "ci-cd", message: "Build Succeeded - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)") }
   }
- }
 }
